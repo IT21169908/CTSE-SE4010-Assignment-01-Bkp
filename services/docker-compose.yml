@@ -1,0 +1,27 @@
+services:
+  nosql-db:
+    image: mvertes/alpine-mongo
+    ports:
+      - "27018:27017"
+    container_name: nosql-db
+    volumes:
+      - ./db/:/data/db
+
+  auth:
+    build:
+      dockerfile: Dockerfile
+      context: ./auth
+    container_name: authentication
+    ports:
+      - "8001:8001"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - .:/app
+      - /app/auth/node_modules
+    environment:
+      NODE_ENV: development
+    env_file:
+      - ./auth/.env.docker
+    # Add other configuration like volumes, networks, etc.
