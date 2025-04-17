@@ -6,6 +6,12 @@ import morgan from "morgan";
 import cors from 'cors';
 import favicon from 'serve-favicon';
 import * as favPath from 'path';
+import {RabbitMQService} from "./services/RrabbitMQService";
+import {initRoutes} from "./routes";
+import {RequestLoggerHandler} from "./middleware/request-logger";
+import {ResponseHandler} from "./middleware/response-handler";
+import {jsonErrorHandler} from "./middleware/error-handler";
+import {Authentication} from "./middleware/authentication";
 
 const expressApp = async () => {
     const isProduction = process.env.NODE_ENV === "production";
@@ -29,6 +35,8 @@ const expressApp = async () => {
         app.use(cors());
     }
 
+    const rabbitMQService = await RabbitMQService.getInstance()
+
     app.use(favicon(favPath.join(__dirname, "../resources", "favicons/favicon.ico")));
     app.use('/static', express.static(favPath.join(__dirname, "../resources")));
 
@@ -36,6 +44,11 @@ const expressApp = async () => {
         res.json("Auth service™ API").status(200);
     });
 
+    app.use('/me', Authentication.verifyToken);
+    initRoutes(app, rabbitMQService)
+
+    // Error Handling
+    app.use(jsonErrorHandler);
 
     return app;
 }
