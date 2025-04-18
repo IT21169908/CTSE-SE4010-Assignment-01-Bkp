@@ -1,12 +1,12 @@
 import {RabbitMQService} from "./RrabbitMQService";
 import env from "../config";
 import {NextFunction, Request, Response} from "express";
-import {ObjectId} from "mongoose";
+import {ObjectId, Types} from "mongoose";
 
 import {Permission, Role, SignedUpAs} from "../enums/auth";
 import {validationsChecker} from "../middleware/validations/validation-handler";
 import UserRepository from "../repository/UserRepository";
-import {AuthUserData} from "../types/util-types";
+import {AuthUserData, StringOrObjectId} from "../types/util-types";
 import {Time} from "../enums/time";
 import {AppLogger, ErrorLogger} from "../utils/logging";
 import {DStudent} from "../models/Student.model";
@@ -238,13 +238,13 @@ class AuthService {
                 AppLogger.warn(`emailCheckUser ID: ${emailCheckUser?._id} | update user ID: ${ownUser._id}`);
                 AppLogger.warn(`emailCheckUser: ${emailCheckUser?.email} | update user: ${ownUser.email}`);
 
-                if (!emailCheckUser || emailCheckUser._id.equals(ownUser._id)) {
+                if (!emailCheckUser || (emailCheckUser._id as Types.ObjectId).equals(ownUser._id as Types.ObjectId)) {
                     const userDetails: Partial<IUser> = {
                         email: email,
                         phone: phone,
                         name: name,
                     };
-                    await this.userRepository.update(ownUser._id, userDetails, ownUser).then(user => {
+                    await this.userRepository.update(ownUser._id as Types.ObjectId, userDetails, ownUser).then(user => {
                         res.sendSuccess(user, "User updated successfully!");
                     }).catch(next);
                 } else {
@@ -260,7 +260,7 @@ class AuthService {
     async deactivate(req: Request, res: Response, next: NextFunction) {
         const ownUser = req.user as IUser;
         if (ownUser) {
-            this.userRepository.deactivate(ownUser._id, ownUser).then(user => {
+            this.userRepository.deactivate(ownUser._id as Types.ObjectId, ownUser).then(user => {
                 res.sendSuccess(user, "User deactivated successfully!");
             }).catch(next);
         } else {
@@ -273,7 +273,7 @@ class AuthService {
         const ownUser = req.user as IUser;
         console.log(ownUser)
         if (ownUser) {
-            this.userRepository.getUser(ownUser._id).then((user: IUser) => {
+            this.userRepository.getUser(ownUser._id as Types.ObjectId).then((user: IUser) => {
                 res.sendSuccess(user);
             }).catch(next);
         } else {

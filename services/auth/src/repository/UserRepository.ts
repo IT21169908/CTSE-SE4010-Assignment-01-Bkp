@@ -1,6 +1,6 @@
 import {PopulateOptions, Types} from "mongoose";
 import {Role, SignedUpAs} from "../enums/auth";
-import {AuthUserData} from "../types/util-types";
+import {AuthUserData, StringOrObjectId} from "../types/util-types";
 import User from "../schemas/User.schema";
 import {AppLogger} from "../utils/logging";
 import {ApplicationError} from "../utils/application-error";
@@ -103,7 +103,7 @@ export default class UserRepository {
             const reason = {
                 reason: "Self Deactivation",
                 deactivatedAt: new Date(),
-                deactivatedBy: ownUser._id
+                deactivatedBy: ownUser._id as StringOrObjectId
             };
             if (!selectedUser.deactivateReasons) {
                 selectedUser.deactivateReasons = [reason];

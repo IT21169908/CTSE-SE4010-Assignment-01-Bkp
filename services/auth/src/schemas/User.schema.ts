@@ -1,10 +1,11 @@
 import * as mongoose from "mongoose";
+import type {StringValue} from "ms";
 import {Schema} from "mongoose";
 import * as bcrypt from 'bcryptjs';
 import {Permission} from "../enums/auth";
 import {checkPermission} from "../middleware/validate-permissions";
 import {IUser} from "../models/User.model";
-import jwt from "jsonwebtoken";
+import jwt, {SignOptions} from "jsonwebtoken";
 import {AppLogger} from "../utils/logging";
 
 export const UserSchemaOptions: mongoose.SchemaOptions = {
@@ -101,7 +102,7 @@ UserSchema.pre<IUser>('save', function (next) {
     });
 });
 
-UserSchema.methods.createAccessToken = function (expiresIn = "365 days") {
+UserSchema.methods.createAccessToken = function (expiresIn: StringValue = `365Days`) {
     const jwtSecret = process.env.JWT_SECRET || "";
     AppLogger.info(`User Access Token Created (Expires In: ${expiresIn})`);
     const payload = {
