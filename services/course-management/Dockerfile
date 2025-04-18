@@ -1,8 +1,10 @@
 # Use Node.js base image
 FROM node
 
+LABEL authors="prashanth"
+
 # Set working directory
-WORKDIR /app/course-management-service
+WORKDIR /app/course-management
 
 # Copy package.json and package-lock.json
 COPY package.json .

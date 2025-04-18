@@ -25,3 +25,22 @@ services:
     env_file:
       - ./auth/.env.docker
     # Add other configuration like volumes, networks, etc.
+
+  course-management:
+    build:
+      dockerfile: Dockerfile
+      context: ./course-management
+    container_name: courses
+    ports:
+      - "8002:8002"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - .:/app
+      - /app/course-management/node_modules
+    environment:
+      NODE_ENV: development
+    env_file:
+      - ./course-management/.env.docker
+    # Add other configuration like volumes, networks, etc.
