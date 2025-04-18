@@ -12,6 +12,9 @@ COPY package.json .
 # Install dependencies
 RUN npm install
 
+# Compile TypeScript to JavaScript
+RUN npm run build
+
 # Copy source code
 COPY . .
 

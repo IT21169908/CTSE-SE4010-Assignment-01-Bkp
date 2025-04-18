@@ -32,6 +32,10 @@ spec:
           image: hansajith18/auth-service:latest
           ports:
             - containerPort: 8001
+          envFrom:
+            - secretRef:
+                name: auth-env
+
           env:
             - name: NODE_ENV
               value: development
