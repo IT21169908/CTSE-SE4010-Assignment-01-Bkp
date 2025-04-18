@@ -26,6 +26,7 @@ export class RabbitMQService {
     }
 
     private async init(): Promise<void> {
+        console.log(".env MSG_QUEUE_URL fetched as: " + MSG_QUEUE_URL);
         const connection = await amqplib.connect(MSG_QUEUE_URL);
         this.channel = await connection.createChannel();
 

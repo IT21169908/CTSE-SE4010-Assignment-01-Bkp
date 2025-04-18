@@ -43,3 +43,7 @@ jobs:
         run: |
           aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster
           kubectl apply -f k8s/
+
+      - name: Restart deployments
+        run: |
+          kubectl rollout restart deployment auth

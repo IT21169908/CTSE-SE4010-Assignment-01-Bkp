@@ -30,6 +30,7 @@ spec:
       containers:
         - name: auth
           image: hansajith18/auth-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8001
           envFrom:
