@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 8001
 
 # Command to run the service
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]
