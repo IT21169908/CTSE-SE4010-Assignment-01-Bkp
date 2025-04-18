@@ -1,58 +1,71 @@
 import { Request, Response } from "express";
 import Forum from "../models/forum.model";
+import { Role } from "../constants/roles";
+import { hasRole } from "../utils/roleChecker";
+
+const staffRoles = [Role.ADMIN, Role.LECTURER];
 
 export const createForum = async (req: Request, res: Response) => {
-  const { title, content, courseId } = req.body;
-  const user = req.user;
-
-  if (user.role !== 1 && user.role !== 2) {
-    return res
-      .status(403)
-      .json({ message: "Only Admins and Lecturers can create forums" });
+  if (!hasRole(req, staffRoles)) {
+    return res.status(403).json({ message: "Unauthorized to create forum" });
   }
 
-  const forum = new Forum({
-    title,
-    content,
-    courseId,
-    author: user._id,
-  });
+  const { title, content, courseId } = req.body;
 
-  await forum.save();
-  res.status(201).json(forum);
+  try {
+    const newForum = await Forum.create({
+      title,
+      content,
+      courseId,
+      createdBy: req.user!._id,
+    });
+
+    res.status(201).json(newForum);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err });
+  }
 };
 
 export const updateForum = async (req: Request, res: Response) => {
-  const forum = await Forum.findById(req.params.id);
-  const user = req.user;
-
-  if (!forum) return res.status(404).json({ message: "Forum not found" });
-
-  if (forum.author !== user._id) {
-    return res
-      .status(403)
-      .json({ message: "Only the creator can update this forum" });
+  if (!hasRole(req, staffRoles)) {
+    return res.status(403).json({ message: "Unauthorized to update forum" });
   }
 
-  forum.title = req.body.title;
-  forum.content = req.body.content;
-  await forum.save();
+  const { id } = req.params;
+  const { title, content } = req.body;
 
-  res.json(forum);
+  try {
+    const updatedForum = await Forum.findByIdAndUpdate(
+      id,
+      { title, content },
+      { new: true }
+    );
+
+    if (!updatedForum) {
+      return res.status(404).json({ message: "Forum not found" });
+    }
+
+    res.status(200).json(updatedForum);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err });
+  }
 };
 
 export const deleteForum = async (req: Request, res: Response) => {
-  const forum = await Forum.findById(req.params.id);
-  const user = req.user;
-
-  if (!forum) return res.status(404).json({ message: "Forum not found" });
-
-  if (forum.author !== user._id) {
-    return res
-      .status(403)
-      .json({ message: "Only the creator can delete this forum" });
+  if (!hasRole(req, staffRoles)) {
+    return res.status(403).json({ message: "Unauthorized to delete forum" });
   }
 
-  await forum.deleteOne();
-  res.json({ message: "Forum deleted" });
+  const { id } = req.params;
+
+  try {
+    const deletedForum = await Forum.findByIdAndDelete(id);
+    if (!deletedForum) {
+      return res.status(404).json({ message: "Forum not found" });
+    }
+
+    res.status(200).json({ message: "Forum deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err });
+  }
 };
