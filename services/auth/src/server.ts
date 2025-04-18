@@ -11,6 +11,8 @@ const startServer = async () => {
 
     const isProduction = process.env.NODE_ENV === "production";
     const port = process.env.PORT;
+    console.log(".env port fetched as: " + port);
+    
     let server: https.Server | http.Server;
 
     console.log("isProduction : " + isProduction)
