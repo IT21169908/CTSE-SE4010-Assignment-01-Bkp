@@ -1,10 +1,16 @@
 import app from "./app";
 import connectDB from "./config/db";
+import { connectToBroker } from "./utils/message-broker";
 
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
+const start = async () => {
+  await connectDB();
+  await connectToBroker();
+
   app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Forum Service running at http://localhost:${PORT}`);
   });
-});
+};
+
+start();

@@ -1,16 +1,15 @@
 import express from "express";
+import { authenticateUser } from "../middleware/auth.middleware";
 import {
-  getAllPosts,
-  createPost,
-  getPostById,
-  deletePost,
+  createForum,
+  updateForum,
+  deleteForum,
 } from "../controllers/forum.controller";
 
 const router = express.Router();
 
-router.get("/", getAllPosts);
-router.post("/", createPost);
-//router.get('/:id', getPostById);
-router.delete("/:id", deletePost);
+router.post("/", authenticateUser, createForum);
+router.put("/:id", authenticateUser, updateForum);
+router.delete("/:id", authenticateUser, deleteForum);
 
 export default router;
