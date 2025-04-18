@@ -10,7 +10,7 @@ spec:
     app: auth
   ports:
     - protocol: TCP
-      port: 8001
+      port: 80
       targetPort: 8001
 ---
 apiVersion: apps/v1
