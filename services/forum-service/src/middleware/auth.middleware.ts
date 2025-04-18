@@ -30,7 +30,7 @@ export const authenticateUser = async (
 ) => {
   // Simulate a logged-in user for testing
   req.user = {
-    _id: "1234567890abcdef",
+    _id: "60c72b2f9e1d4f3a4c8d1234",
     name: "Test User",
     email: "test@user.com",
     role: Role.ADMIN,

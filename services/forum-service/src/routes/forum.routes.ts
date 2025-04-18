@@ -1,21 +1,23 @@
 import { Router } from "express";
-import {
-  createForum,
-  getForums,
-  getForumsByCourseId,
-  updateForum,
-  deleteForum,
-} from "../controllers/forum.controller";
-import { authMiddleware } from "../middlewares/auth.middleware";
+import * as forumController from "../controllers/forum.controller";
+import { authenticateUser } from "../middleware/auth.middleware";
+import { asyncHandler } from "../utils/asyncHandler";
 
 const router = Router();
 
-router.use(authMiddleware);
+router.use(authenticateUser);
 
-router.get("/", getForums);
-router.get("/course/:courseId", getForumsByCourseId);
-router.post("/", createForum);
-router.put("/:id", updateForum);
-router.delete("/:id", deleteForum);
+router.get("/", asyncHandler(forumController.getForums));
+
+router.get(
+  "/course/:courseId",
+  asyncHandler(forumController.getForumsByCourseId)
+);
+
+router.post("/", asyncHandler(forumController.createForum));
+
+router.put("/:id", asyncHandler(forumController.updateForum));
+
+router.delete("/:id", asyncHandler(forumController.deleteForum));
 
 export default router;

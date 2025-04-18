@@ -1,9 +1,15 @@
-import express from "express";
-import { createConversation } from "../controllers/conversation.controller";
+import { Router } from "express";
+import * as conversationController from "../controllers/conversation.controller";
 import { authenticateUser } from "../middleware/auth.middleware";
+import { asyncHandler } from "../utils/asyncHandler";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/", authenticateUser, createConversation);
+router.use(authenticateUser);
+
+router.post(
+  "/:forumId",
+  asyncHandler(conversationController.createConversation)
+);
 
 export default router;
