@@ -18,9 +18,34 @@ export const createForum = async (req: Request, res: Response) => {
       content,
       courseId,
       createdBy: req.user!._id,
+      conversations: [],
     });
 
     res.status(201).json(newForum);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err });
+  }
+};
+
+export const getForums = async (_req: Request, res: Response) => {
+  try {
+    const forums = await Forum.find()
+      // .populate("createdBy", "name email")
+      .populate("conversations");
+    res.status(200).json(forums);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err });
+  }
+};
+
+export const getForumsByCourseId = async (req: Request, res: Response) => {
+  const { courseId } = req.params;
+
+  try {
+    const forums = await Forum.find({ courseId })
+      // .populate("createdBy", "name email")
+      .populate("conversations");
+    res.status(200).json(forums);
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err });
   }

@@ -1,15 +1,21 @@
-import express from "express";
-import { authenticateUser } from "../middleware/auth.middleware";
+import { Router } from "express";
 import {
   createForum,
+  getForums,
+  getForumsByCourseId,
   updateForum,
   deleteForum,
 } from "../controllers/forum.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/", authenticateUser, createForum);
-router.put("/:id", authenticateUser, updateForum);
-router.delete("/:id", authenticateUser, deleteForum);
+router.use(authMiddleware);
+
+router.get("/", getForums);
+router.get("/course/:courseId", getForumsByCourseId);
+router.post("/", createForum);
+router.put("/:id", updateForum);
+router.delete("/:id", deleteForum);
 
 export default router;
