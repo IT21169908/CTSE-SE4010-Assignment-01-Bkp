@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { sendRPCMessage } from "../utils/message-broker";
+import { Role } from "../constants/roles";
 
 // export const authenticateUser = async (
 //   req: Request,
@@ -32,7 +33,7 @@ export const authenticateUser = async (
     _id: "1234567890abcdef",
     name: "Test User",
     email: "test@user.com",
-    role: 1, // Admin = 1, Lecturer = 2, Student = 0
+    role: Role.ADMIN,
   };
   next();
 };
