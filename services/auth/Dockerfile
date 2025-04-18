@@ -12,11 +12,11 @@ COPY package.json .
 # Install dependencies
 RUN npm install
 
-# Compile TypeScript to JavaScript
-RUN npm run build
-
 # Copy source code
 COPY . .
+
+# Compile TypeScript to JavaScript
+RUN npm run build
 
 # Expose the port
 EXPOSE 8001
