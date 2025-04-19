@@ -24,7 +24,7 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: "http://localhost:5000",
+        url: process.env.API_URL,
       },
     ],
   },
