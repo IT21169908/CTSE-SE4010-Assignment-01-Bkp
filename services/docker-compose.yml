@@ -44,3 +44,21 @@ services:
     env_file:
       - ./course-management/.env.docker
     # Add other configuration like volumes, networks, etc.
+
+  forum-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./forum-service
+    container_name: forum
+    ports:
+      - "8003:8003"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - .:/app
+      - /app/forum-service/node_modules
+    environment:
+      NODE_ENV: development
+    env_file:
+      - ./forum-service/.env.docker
