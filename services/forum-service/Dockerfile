@@ -1,5 +1,5 @@
 # Use Node.js base image
-FROM node
+FROM node:20-alpine
 
 LABEL authors="hasitha"
 
