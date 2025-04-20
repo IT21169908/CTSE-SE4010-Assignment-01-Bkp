@@ -4,7 +4,7 @@ import amqp from "amqplib";
 let channel: amqp.Channel;
 
 export const connectToBroker = async () => {
-  const connection = await amqp.connect("amqp://localhost");
+  const connection = await amqp.connect(process.env.MSG_QUEUE_URL!);
   channel = await connection.createChannel();
 };
 

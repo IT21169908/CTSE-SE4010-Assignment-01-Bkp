@@ -1,3 +1,45 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Forum:
+ *       type: object
+ *       required:
+ *         - title
+ *         - content
+ *         - courseId
+ *         - createdBy
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated MongoDB ID
+ *         title:
+ *           type: string
+ *           description: Title of the forum
+ *         content:
+ *           type: string
+ *           description: Content of the forum
+ *         courseId:
+ *           type: string
+ *           description: ID of the course this forum belongs to
+ *         createdBy:
+ *           type: string
+ *           description: ID of the user who created the forum
+ *         conversations:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Array of conversation IDs associated with this forum
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Forum creation timestamp
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Forum last update timestamp
+ */
+
 import mongoose, { Schema, Document, Types } from "mongoose";
 import Conversation from "./conversation.model";
 

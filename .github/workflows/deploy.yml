@@ -32,6 +32,11 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/course-service:latest ./services/course-management
           docker push ${{ secrets.DOCKER_USERNAME }}/course-service:latest
 
+      - name: Build and Push Forum Service Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/forum-service:latest ./services/forum-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/forum-service:latest
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
