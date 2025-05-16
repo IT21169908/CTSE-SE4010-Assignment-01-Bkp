@@ -12,6 +12,7 @@ import {RequestLoggerHandler} from "./middleware/request-logger";
 import {ResponseHandler} from "./middleware/response-handler";
 import {jsonErrorHandler} from "./middleware/error-handler";
 import {Authentication} from "./middleware/authentication";
+import {setupSwagger} from "./swagger";
 
 const expressApp = async () => {
     const isProduction = process.env.NODE_ENV === "production";

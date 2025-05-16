@@ -1,0 +1,681 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Auth Microservice API",
+    "version": "1.0.0",
+    "description": "API documentation for the Auth microservice."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8001"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User management endpoints"
+    },
+    {
+      "name": "Auth Service",
+      "description": "Authentication APIs"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token for authentication"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          }
+        },
+        "example": {
+          "message": "An error occurred"
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "The user ID",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "name": {
+            "type": "string",
+            "description": "The user's name",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "The user's email",
+            "example": "john.doe@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "description": "The user's phone number",
+            "example": "+1234567890"
+          },
+          "role": {
+            "type": "number",
+            "description": "The user's role (0=Student, 1=Lecturer, 2=Admin)",
+            "example": 0
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The user's permissions",
+            "example": [
+              "READ_PROFILE",
+              "UPDATE_PROFILE"
+            ]
+          },
+          "lastLogin": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The user's last login date",
+            "example": "2023-01-01T00:00:00.000Z"
+          },
+          "signedUpAs": {
+            "type": "string",
+            "description": "How the user signed up",
+            "example": "EMAIL"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the user is active",
+            "example": true
+          }
+        }
+      },
+      "Student": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "studentId": {
+                "type": "string",
+                "description": "The student's ID",
+                "example": "ST12345"
+              },
+              "enrolledCourses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The courses the student is enrolled in",
+                "example": [
+                  "CS101",
+                  "CS102"
+                ]
+              },
+              "yearLevel": {
+                "type": "string",
+                "description": "The student's year level",
+                "example": "Year 2"
+              },
+              "department": {
+                "type": "string",
+                "description": "The student's department",
+                "example": "Computer Science"
+              },
+              "semesterGPA": {
+                "type": "number",
+                "description": "The student's semester GPA",
+                "example": 3.5
+              },
+              "overallGPA": {
+                "type": "number",
+                "description": "The student's overall GPA",
+                "example": 3.7
+              },
+              "extracurricularActivities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The student's extracurricular activities",
+                "example": [
+                  "Chess Club",
+                  "Debate Team"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password",
+            "example": "myStrongPassword123"
+          },
+          "signedUpAs": {
+            "type": "string",
+            "description": "How the user signed up",
+            "example": "EMAIL"
+          },
+          "remember": {
+            "type": "boolean",
+            "description": "Whether to remember the user",
+            "example": true
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JWT token for the logged-in user",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "RegisterStudentRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password",
+          "role"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the user",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address of the user",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "Password for the user",
+            "example": "mySecurePassword"
+          },
+          "role": {
+            "type": "number",
+            "description": "User role (0 for Student)",
+            "example": 0
+          },
+          "remember": {
+            "type": "boolean",
+            "description": "Whether to remember the user",
+            "example": true
+          }
+        }
+      },
+      "RegisterLecturerRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password",
+          "role",
+          "facultyId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the user",
+            "example": "Jane Smith"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address of the user",
+            "example": "jane.smith@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "Password for the user",
+            "example": "mySecurePassword"
+          },
+          "role": {
+            "type": "number",
+            "description": "User role (1 for Lecturer)",
+            "example": 1
+          },
+          "facultyId": {
+            "type": "string",
+            "description": "Faculty ID of the lecturer",
+            "example": "FAC12345"
+          },
+          "remember": {
+            "type": "boolean",
+            "description": "Whether to remember the user",
+            "example": true
+          }
+        }
+      },
+      "RegisterAdminRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password",
+          "role",
+          "adminId",
+          "nic",
+          "superAdminToken"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the user",
+            "example": "Admin User"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address of the user",
+            "example": "admin@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "Password for the user",
+            "example": "mySecurePassword"
+          },
+          "role": {
+            "type": "number",
+            "description": "User role (2 for Admin)",
+            "example": 2
+          },
+          "adminId": {
+            "type": "string",
+            "description": "Admin ID",
+            "example": "ADM12345"
+          },
+          "nic": {
+            "type": "string",
+            "description": "National ID Card number",
+            "example": "123456789X"
+          },
+          "superAdminToken": {
+            "type": "string",
+            "description": "Token for super admin authorization",
+            "example": "super-admin-secret-token"
+          },
+          "remember": {
+            "type": "boolean",
+            "description": "Whether to remember the user",
+            "example": true
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JWT token for the registered user",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the user",
+            "example": "John Doe Updated"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address of the user",
+            "example": "john.updated@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the user",
+            "example": "+1987654321"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/test": {
+      "get": {
+        "summary": "Test the Auth Service",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully tested"
+          },
+          "401": {
+            "description": "Unauthorized access"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login a user",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "description": "User credentials for authentication",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "User's password",
+                    "example": "myStrongPassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token for the logged-in user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "description": "Registration data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the user",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email address of the user",
+                    "example": "john.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Password for the user",
+                    "example": "mySecurePassword"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The ID of the newly created user",
+                      "example": "1234567890abcdefg"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the registered user",
+                      "example": "John Doe"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "summary": "Get current user information",
+        "description": "Retrieves the profile information of the currently authenticated user",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - Not allowed to access this resource"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update current user information",
+        "description": "Updates the profile information of the currently authenticated user",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "User information to update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - Not allowed to access this resource"
+          },
+          "422": {
+            "description": "Validation error - Email already exists"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deactivate current user account",
+        "description": "Deactivates the account of the currently authenticated user",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User account deactivated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User deactivated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - Not allowed to access this resource"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  }
+}

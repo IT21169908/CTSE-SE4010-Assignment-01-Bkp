@@ -7,7 +7,7 @@ import User, { UserSchemaOptions } from "./User.schema";
 export const StudentSchema = new mongoose.Schema({
     studentId: {
         type:  Schema.Types.String,
-        required: true
+        required: false
     },
     enrolledCourses: [
         {

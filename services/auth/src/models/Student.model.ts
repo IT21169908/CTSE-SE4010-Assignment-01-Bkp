@@ -1,7 +1,7 @@
 import { DUser, IUser } from "./User.model";
 
 interface CommonAttributes {
-    studentId: string;
+    studentId?: string;
     enrolledCourses?: string[];
     yearLevel?: string;
     department?: string;

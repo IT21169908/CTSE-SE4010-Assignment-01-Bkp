@@ -3,6 +3,7 @@ import createHttpError from "http-errors";
 import {RabbitMQService} from "../services/RrabbitMQService";
 import AuthService from "../services/AuthService";
 import {AuthRoutesInit} from "./auth";
+import {setupSwagger} from "../swagger";
 
 // TODO: test purposes
 export function initRoutes(app: Express, rabbitMQ: RabbitMQService) {
@@ -12,6 +13,7 @@ export function initRoutes(app: Express, rabbitMQ: RabbitMQService) {
 
     AuthRoutesInit(app, authService);
 
+    setupSwagger(app);
     /* INVALID REQUESTS */
     // app.get('/', (req: Request, res: Response) => res.redirect(301, "/api"));
     app.use((req, res, next) => next(new createHttpError.NotFound()));

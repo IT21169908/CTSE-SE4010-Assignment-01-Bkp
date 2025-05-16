@@ -132,20 +132,20 @@ class AuthService {
                         }
                     } else {
                         AppLogger.error(`Unauthorized Role!`);
-                        res.sendError('Unauthorized Role!');
+                        res.sendError('Unauthorized Role!', 422);
                     }
                 } else {
                     AppLogger.error(`Role Required!`);
-                    res.sendError('Role Required!');
+                    res.sendError('Invalid Role!', 422);
                 }
             }
         }
     }
 
     async registerStudent(req: Request, res: Response, next: NextFunction) {
-        const {_id: id, role, name, email, password, studentId, remember} = req.body;
+        const {_id: id, role, name, email, password, remember} = req.body;
         const data: DStudent = {
-            studentId: studentId,
+            // studentId: studentId,
             name: name,
             email: email,
             password: password,
