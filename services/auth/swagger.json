@@ -414,6 +414,7 @@
           "content": {
             "application/json": {
               "schema": {
+                "$ref": "#/components/schemas/LoginRequest",
                 "type": "object",
                 "required": [
                   "email",
@@ -445,6 +446,17 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User logged as Student!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/LoginResponse"
+                    },
                     "token": {
                       "type": "string",
                       "description": "JWT token for the logged-in user"
@@ -456,6 +468,9 @@
           },
           "401": {
             "description": "Invalid credentials"
+          },
+          "422": {
+            "description": "Validation error"
           }
         }
       }
@@ -463,6 +478,7 @@
     "/register": {
       "post": {
         "summary": "Register a new user",
+        "description": "Register a new user as Student, Lecturer, or Admin based on the role parameter",
         "tags": [
           "Auth"
         ],
@@ -472,6 +488,17 @@
           "content": {
             "application/json": {
               "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/RegisterStudentRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/RegisterLecturerRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/RegisterAdminRequest"
+                  }
+                ],
                 "type": "object",
                 "required": [
                   "name",
@@ -502,6 +529,29 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User Registered as Student!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/RegisterResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "201": {
             "description": "User successfully registered",
             "content": {
@@ -523,6 +573,15 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Unauthorized attempt to register as Admin"
+          },
+          "409": {
+            "description": "User already exists"
+          },
+          "422": {
+            "description": "Validation error or invalid role"
           }
         }
       }

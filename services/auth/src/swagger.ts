@@ -13,6 +13,19 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
+import fs from 'fs';
+import path from 'path';
+
+// Load existing swagger.json if it exists
+let existingSwagger = {};
+const swaggerJsonPath = path.join(__dirname, '../swagger.json');
+if (fs.existsSync(swaggerJsonPath)) {
+  try {
+    existingSwagger = JSON.parse(fs.readFileSync(swaggerJsonPath, 'utf8'));
+  } catch (error) {
+    console.error('Error reading swagger.json:', error);
+  }
+}
 
 const options: swaggerJSDoc.Options = {
   definition: {
@@ -27,12 +40,22 @@ const options: swaggerJSDoc.Options = {
         url: "http://localhost:8001",
       },
     ],
+    ...existingSwagger, // Merge with existing swagger.json
   },
-  apis: ["./src/*.ts", "./src/routes/*.ts", "./src/models/*.ts"], // path to files with annotations
+  apis: ["./src/*.ts", "./src/routes/*.ts", "./src/models/*.ts", "./src/schemas/*.ts"], // path to files with annotations
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
+// Write the generated swagger spec to file
+fs.writeFileSync(swaggerJsonPath, JSON.stringify(swaggerSpec, null, 2));
+
 export const setupSwagger = (app: Express) => {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+  // Endpoint to get the Swagger JSON
+  app.get('/swagger.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  });
 };

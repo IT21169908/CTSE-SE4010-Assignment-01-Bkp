@@ -121,8 +121,112 @@ export function AuthRoutesInit(app: Express, authService: AuthService) {
     // app.get('/logout', authService.logout.bind(authService));
 
     // /* AUTH ROUTES ===================================== */
+    /**
+     * @swagger
+     * /me:
+     *   get:
+     *     summary: Get current user information
+     *     description: Retrieves the profile information of the currently authenticated user
+     *     tags: [User]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: User profile retrieved successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 data:
+     *                   $ref: '#/components/schemas/User'
+     *       401:
+     *         description: Unauthorized - Invalid or missing token
+     *       403:
+     *         description: Forbidden - Not allowed to access this resource
+     *       500:
+     *         description: Internal server error
+     */
     app.get('/me', authService.getSelf.bind(authService));
+
+    /**
+     * @swagger
+     * /me:
+     *   put:
+     *     summary: Update current user information
+     *     description: Updates the profile information of the currently authenticated user
+     *     tags: [User]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       description: User information to update
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/UpdateUserRequest'
+     *     responses:
+     *       200:
+     *         description: User profile updated successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 message:
+     *                   type: string
+     *                   example: "User updated successfully!"
+     *                 data:
+     *                   $ref: '#/components/schemas/User'
+     *       401:
+     *         description: Unauthorized - Invalid or missing token
+     *       403:
+     *         description: Forbidden - Not allowed to access this resource
+     *       422:
+     *         description: Validation error - Email already exists
+     *       500:
+     *         description: Internal server error
+     */
     app.put('/me', authService.updateSelf.bind(authService));
+
+    /**
+     * @swagger
+     * /me:
+     *   delete:
+     *     summary: Deactivate current user account
+     *     description: Deactivates the account of the currently authenticated user
+     *     tags: [User]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: User account deactivated successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 message:
+     *                   type: string
+     *                   example: "User deactivated successfully!"
+     *                 data:
+     *                   $ref: '#/components/schemas/User'
+     *       401:
+     *         description: Unauthorized - Invalid or missing token
+     *       403:
+     *         description: Forbidden - Not allowed to access this resource
+     *       500:
+     *         description: Internal server error
+     */
     app.delete('/me', authService.deactivate.bind(authService));
 
 }
