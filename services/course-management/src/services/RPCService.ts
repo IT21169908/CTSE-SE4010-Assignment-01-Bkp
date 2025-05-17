@@ -1,5 +1,5 @@
 // import * as amqplib from 'amqplib';
-import { Connection, Channel, ConsumeMessage } from 'amqplib';
+import { connect, Connection, Channel, ConsumeMessage } from 'amqplib';
 import env from "../config";
 import CourseService from "./CourseService";
 import {v4 as uuid4} from "uuid";
@@ -15,7 +15,7 @@ let amqplibConnection: Connection | null = null;
 
 export const getChannel = async (): Promise<Channel> => {
     if (amqplibConnection === null) {
-        amqplibConnection = await amqplib.connect(MSG_QUEUE_URL);
+        amqplibConnection = await connect(MSG_QUEUE_URL);
     }
     return await amqplibConnection.createChannel();
 };
