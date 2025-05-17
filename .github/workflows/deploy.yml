@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.MD'
+      - '.gitignore'
+      - 'LICENSE'
 
 jobs:
   build-and-deploy:
@@ -46,9 +51,13 @@ jobs:
 
       - name: Update K8s manifests and apply
         run: |
-          aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster
+          # Replace Docker username in Kubernetes YAML files
+          find k8s -name "*.yaml" -type f -exec sed -i "s|hansajith18/|${{ secrets.DOCKER_USERNAME }}/|g" {} \;
+          aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster-t3-medium
           kubectl apply -f k8s/
 
       - name: Restart deployments
         run: |
           kubectl rollout restart deployment auth
+          kubectl rollout restart deployment course
+          kubectl rollout restart deployment forum

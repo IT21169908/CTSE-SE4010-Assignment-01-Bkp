@@ -1,10 +1,3 @@
-/**
- * @swagger
- * tags:
- *   - name: Auth Service
- *     description: Authentication APIs
- */
-
 import {Express, NextFunction, Request, Response} from 'express';
 import AuthService from "../services/AuthService";
 import User from "../schemas/User.schema";
@@ -15,7 +8,7 @@ export function AuthRoutesInit(app: Express, authService: AuthService) {
      * /test:
      *   get:
      *     summary: Test the Auth Service
-     *     tags: [Auth]
+     *     tags: [General]
      *     responses:
      *       200:
      *         description: Successfully tested
@@ -81,6 +74,7 @@ export function AuthRoutesInit(app: Express, authService: AuthService) {
      *             required:
      *               - name
      *               - email
+     *               - role
      *               - password
      *             properties:
      *               name:
@@ -97,6 +91,11 @@ export function AuthRoutesInit(app: Express, authService: AuthService) {
      *                 format: password
      *                 description: Password for the user
      *                 example: mySecurePassword
+     *               role:
+     *                 type: number
+     *                 enum: [0, 1, 2]
+     *                 description: User role (0=STUDENT, 1=ADMIN, 2=LECTURER)
+     *                 example: 0
      *     responses:
      *       201:
      *         description: User successfully registered

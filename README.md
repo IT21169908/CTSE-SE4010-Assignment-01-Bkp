@@ -29,6 +29,10 @@ deployed to **AWS EKS** with CI/CD via **GitHub Actions**.
 
 ```bash
 pip install awscli
+```
+```
+choco install kubernetes-cli
+OR
 brew install kubectl
 ```
 
@@ -62,7 +66,8 @@ eksctl create cluster  --name microservice-cluster  --region ap-south-1  --nodeg
 ### ✅ 5. Configure kubectl for EKS
 
 ```bash
-aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster
+aws eks update-kubeconfig --region ap-south-1 --name <eks-cluster-name>
+aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster-t3-medium
 ```
 
 ### ✅  6. Create Kubernetes Secret for .env values

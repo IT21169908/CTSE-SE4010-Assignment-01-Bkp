@@ -3,25 +3,22 @@
   "info": {
     "title": "Auth Microservice API",
     "version": "1.0.0",
-    "description": "API documentation for the Auth microservice."
+    "description": "API documentation for the Auth microservice. This service handles user authentication, registration, and profile management. Works in conjunction with the Course Management service for a complete learning platform.",
+    "contact": {
+      "name": "Development Team",
+      "email": "hansajith18@gmail.com",
+      "url": "https://github.com/IT21156410/CTSE-SE4010-Assignment-01"
+    },
+    "termsOfService": "https://github.com/IT21156410/CTSE-SE4010-Assignment-01"
   },
   "servers": [
     {
-      "url": "http://localhost:8001"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Auth",
-      "description": "Authentication endpoints"
+      "url": "http://localhost:8001",
+      "description": "Local development server"
     },
     {
-      "name": "User",
-      "description": "User management endpoints"
-    },
-    {
-      "name": "Auth Service",
-      "description": "Authentication APIs"
+      "url": "http://a7a5a2e8c13e64370819601c6a21ecd0-1066139683.ap-south-1.elb.amazonaws.com:8001",
+      "description": "AWS ELB Production server"
     }
   ],
   "components": {
@@ -29,8 +26,7 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "JWT token for authentication"
+        "bearerFormat": "JWT"
       }
     },
     "schemas": {
@@ -39,11 +35,9 @@
         "properties": {
           "message": {
             "type": "string",
-            "description": "Error message"
+            "description": "Error message",
+            "example": "An error occurred"
           }
-        },
-        "example": {
-          "message": "An error occurred"
         }
       },
       "User": {
@@ -61,6 +55,7 @@
           },
           "email": {
             "type": "string",
+            "format": "email",
             "description": "The user's email",
             "example": "john.doe@example.com"
           },
@@ -71,96 +66,75 @@
           },
           "role": {
             "type": "number",
-            "description": "The user's role (0=Student, 1=Lecturer, 2=Admin)",
-            "example": 0
+            "description": "The user's role (0=STUDENT, 1=ADMIN, 2=LECTURER)",
+            "example": 0,
+            "enum": [
+              0,
+              1,
+              2
+            ]
           },
           "permissions": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "CREATE_COURSE",
+                "UPDATE_COURSE",
+                "DELETE_COURSE",
+                "ENROLL_COURSE"
+              ]
             },
             "description": "The user's permissions",
             "example": [
-              "READ_PROFILE",
-              "UPDATE_PROFILE"
+              "ENROLL_COURSE"
             ]
           },
           "lastLogin": {
             "type": "string",
             "format": "date-time",
             "description": "The user's last login date",
-            "example": "2023-01-01T00:00:00.000Z"
-          },
-          "signedUpAs": {
-            "type": "string",
-            "description": "How the user signed up",
-            "example": "EMAIL"
+            "example": "2023-01-01T00:00:00Z"
           },
           "isActive": {
             "type": "boolean",
             "description": "Whether the user is active",
             "example": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the user was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the user was last updated",
+            "example": "2023-01-01T00:00:00Z"
           }
         }
       },
-      "Student": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/User"
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The user's name",
+            "example": "John Doe"
           },
-          {
-            "type": "object",
-            "properties": {
-              "studentId": {
-                "type": "string",
-                "description": "The student's ID",
-                "example": "ST12345"
-              },
-              "enrolledCourses": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "The courses the student is enrolled in",
-                "example": [
-                  "CS101",
-                  "CS102"
-                ]
-              },
-              "yearLevel": {
-                "type": "string",
-                "description": "The student's year level",
-                "example": "Year 2"
-              },
-              "department": {
-                "type": "string",
-                "description": "The student's department",
-                "example": "Computer Science"
-              },
-              "semesterGPA": {
-                "type": "number",
-                "description": "The student's semester GPA",
-                "example": 3.5
-              },
-              "overallGPA": {
-                "type": "number",
-                "description": "The student's overall GPA",
-                "example": 3.7
-              },
-              "extracurricularActivities": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "The student's extracurricular activities",
-                "example": [
-                  "Chess Club",
-                  "Debate Team"
-                ]
-              }
-            }
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The user's email",
+            "example": "john.doe@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "description": "The user's phone number",
+            "example": "+1234567890"
           }
-        ]
+        }
       },
       "LoginRequest": {
         "type": "object",
@@ -180,29 +154,19 @@
             "format": "password",
             "description": "User's password",
             "example": "myStrongPassword123"
-          },
-          "signedUpAs": {
-            "type": "string",
-            "description": "How the user signed up",
-            "example": "EMAIL"
-          },
-          "remember": {
-            "type": "boolean",
-            "description": "Whether to remember the user",
-            "example": true
           }
         }
       },
       "LoginResponse": {
         "type": "object",
         "properties": {
-          "token": {
-            "type": "string",
-            "description": "JWT token for the logged-in user",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          },
           "user": {
             "$ref": "#/components/schemas/User"
+          },
+          "token": {
+            "type": "string",
+            "description": "JWT token for authentication",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           }
         }
       },
@@ -217,30 +181,28 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Name of the user",
+            "description": "Name of the student",
             "example": "John Doe"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Email address of the user",
+            "description": "Email address of the student",
             "example": "john.doe@example.com"
           },
           "password": {
             "type": "string",
             "format": "password",
-            "description": "Password for the user",
+            "description": "Password for the student",
             "example": "mySecurePassword"
           },
           "role": {
             "type": "number",
-            "description": "User role (0 for Student)",
+            "enum": [
+              0
+            ],
+            "description": "User role (0=STUDENT)",
             "example": 0
-          },
-          "remember": {
-            "type": "boolean",
-            "description": "Whether to remember the user",
-            "example": true
           }
         }
       },
@@ -250,41 +212,33 @@
           "name",
           "email",
           "password",
-          "role",
-          "facultyId"
+          "role"
         ],
         "properties": {
           "name": {
             "type": "string",
-            "description": "Name of the user",
+            "description": "Name of the lecturer",
             "example": "Jane Smith"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Email address of the user",
+            "description": "Email address of the lecturer",
             "example": "jane.smith@example.com"
           },
           "password": {
             "type": "string",
             "format": "password",
-            "description": "Password for the user",
+            "description": "Password for the lecturer",
             "example": "mySecurePassword"
           },
           "role": {
             "type": "number",
-            "description": "User role (1 for Lecturer)",
-            "example": 1
-          },
-          "facultyId": {
-            "type": "string",
-            "description": "Faculty ID of the lecturer",
-            "example": "FAC12345"
-          },
-          "remember": {
-            "type": "boolean",
-            "description": "Whether to remember the user",
-            "example": true
+            "enum": [
+              2
+            ],
+            "description": "User role (2=LECTURER)",
+            "example": 2
           }
         }
       },
@@ -294,87 +248,59 @@
           "name",
           "email",
           "password",
-          "role",
-          "adminId",
-          "nic",
-          "superAdminToken"
+          "role"
         ],
         "properties": {
           "name": {
             "type": "string",
-            "description": "Name of the user",
+            "description": "Name of the admin",
             "example": "Admin User"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Email address of the user",
+            "description": "Email address of the admin",
             "example": "admin@example.com"
           },
           "password": {
             "type": "string",
             "format": "password",
-            "description": "Password for the user",
+            "description": "Password for the admin",
             "example": "mySecurePassword"
           },
           "role": {
             "type": "number",
-            "description": "User role (2 for Admin)",
-            "example": 2
-          },
-          "adminId": {
-            "type": "string",
-            "description": "Admin ID",
-            "example": "ADM12345"
-          },
-          "nic": {
-            "type": "string",
-            "description": "National ID Card number",
-            "example": "123456789X"
-          },
-          "superAdminToken": {
-            "type": "string",
-            "description": "Token for super admin authorization",
-            "example": "super-admin-secret-token"
-          },
-          "remember": {
-            "type": "boolean",
-            "description": "Whether to remember the user",
-            "example": true
+            "enum": [
+              1
+            ],
+            "description": "User role (1=ADMIN)",
+            "example": 1
           }
         }
       },
       "RegisterResponse": {
         "type": "object",
         "properties": {
-          "token": {
+          "_id": {
             "type": "string",
-            "description": "JWT token for the registered user",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            "description": "The ID of the newly created user",
+            "example": "60d21b4667d0d8992e610c85"
           },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          }
-        }
-      },
-      "UpdateUserRequest": {
-        "type": "object",
-        "properties": {
           "name": {
             "type": "string",
-            "description": "Name of the user",
-            "example": "John Doe Updated"
+            "description": "Name of the registered user",
+            "example": "John Doe"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Email address of the user",
-            "example": "john.updated@example.com"
+            "description": "Email of the registered user",
+            "example": "john.doe@example.com"
           },
-          "phone": {
-            "type": "string",
-            "description": "Phone number of the user",
-            "example": "+1987654321"
+          "role": {
+            "type": "number",
+            "description": "Role of the registered user",
+            "example": 0
           }
         }
       }
@@ -385,12 +311,52 @@
       "bearerAuth": []
     }
   ],
+  "tags": [
+    {
+      "name": "Auth Service",
+      "description": "Authentication APIs"
+    },
+    {
+      "name": "General",
+      "description": "General endpoints for service health and information"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints for login and registration"
+    },
+    {
+      "name": "User",
+      "description": "User profile management endpoints"
+    }
+  ],
   "paths": {
+    "/": {
+      "get": {
+        "summary": "API root endpoint",
+        "tags": [
+          "General"
+        ],
+        "responses": {
+          "200": {
+            "description": "Welcome message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Auth service™ API"
+                }
+              }
+            }
+          }
+        },
+        "x-order": 0
+      }
+    },
     "/test": {
       "get": {
         "summary": "Test the Auth Service",
         "tags": [
-          "Auth"
+          "General"
         ],
         "responses": {
           "200": {
@@ -503,6 +469,7 @@
                 "required": [
                   "name",
                   "email",
+                  "role",
                   "password"
                 ],
                 "properties": {
@@ -522,6 +489,16 @@
                     "format": "password",
                     "description": "Password for the user",
                     "example": "mySecurePassword"
+                  },
+                  "role": {
+                    "type": "number",
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ],
+                    "description": "User role (0=STUDENT, 1=ADMIN, 2=LECTURER)",
+                    "example": 0
                   }
                 }
               }
