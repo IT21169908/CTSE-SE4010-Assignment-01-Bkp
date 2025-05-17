@@ -53,6 +53,6 @@ app.get('/', (req, res) => {
     res.status(200).json(json);
 });
 
-app.listen(8000, () => {
-    console.log("Gateway is Listening to Port 8000");
+app.listen(80, () => {
+    console.log("Gateway is Listening to Port 80");
 });
