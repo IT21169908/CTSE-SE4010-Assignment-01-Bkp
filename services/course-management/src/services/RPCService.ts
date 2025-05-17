@@ -75,7 +75,7 @@ export const requestData = async (RPC_QUEUE_NAME: string, requestPayload: {
             }, 8000);
             channel.consume(
                 q.queue,
-                (msg) => {
+                (msg: amqplib.ConsumeMessage | null) => {
                     if (msg !== null && msg.properties.correlationId == uuid) {
                         resolve(JSON.parse(msg.content.toString()));
                         clearTimeout(timeout);
