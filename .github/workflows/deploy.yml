@@ -41,6 +41,11 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/forum-service:latest ./services/forum-service
           docker push ${{ secrets.DOCKER_USERNAME }}/forum-service:latest
 
+      - name: Build and Push Gateway Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gateway-service:latest ./services/gateway
+          docker push ${{ secrets.DOCKER_USERNAME }}/gateway-service:latest
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -60,3 +65,4 @@ jobs:
           kubectl rollout restart deployment auth
           kubectl rollout restart deployment course
           kubectl rollout restart deployment forum
+          kubectl rollout restart deployment gateway
