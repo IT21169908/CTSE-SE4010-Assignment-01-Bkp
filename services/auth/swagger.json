@@ -248,6 +248,7 @@
                 "required": [
                   "name",
                   "email",
+                  "role",
                   "password"
                 ],
                 "properties": {
@@ -267,6 +268,16 @@
                     "format": "password",
                     "description": "Password for the user",
                     "example": "mySecurePassword"
+                  },
+                  "role": {
+                    "type": "number",
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ],
+                    "description": "User role (0=STUDENT, 1=ADMIN, 2=LECTURER)",
+                    "example": 0
                   }
                 }
               }
