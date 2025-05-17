@@ -29,6 +29,10 @@ deployed to **AWS EKS** with CI/CD via **GitHub Actions**.
 
 ```bash
 pip install awscli
+```
+```
+choco install kubernetes-cli
+OR
 brew install kubectl
 ```
 
