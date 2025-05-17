@@ -46,7 +46,7 @@ jobs:
 
       - name: Update K8s manifests and apply
         run: |
-          aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster-t3.medium
+          aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster-t3-medium
           kubectl apply -f k8s/
 
       - name: Restart deployments
