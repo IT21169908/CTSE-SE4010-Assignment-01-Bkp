@@ -62,3 +62,22 @@ services:
       NODE_ENV: development
     env_file:
       - ./forum-service/.env.example.docker
+
+  gateway:
+    build:
+      dockerfile: Dockerfile
+      context: ./gateway
+    container_name: gateway
+    ports:
+      - "8000:8000"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - .:/app
+      - /app/gateway/node_modules
+    environment:
+      NODE_ENV: development
+    env_file:
+      - ./gateway/.env.docker
+    # Add other configuration like volumes, networks, etc.
