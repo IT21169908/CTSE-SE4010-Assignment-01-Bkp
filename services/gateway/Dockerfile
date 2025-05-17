@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port
-EXPOSE 8000
+EXPOSE 80
 
 # Command to run the service
 CMD ["npm", "run", "start:prod"]
