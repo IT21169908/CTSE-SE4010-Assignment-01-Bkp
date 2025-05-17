@@ -15,6 +15,9 @@ RUN npm install
 # Copy source code
 COPY . .
 
+# Compile TypeScript to JavaScript
+RUN npm run build
+
 # Expose the port
 EXPOSE 8002
 
