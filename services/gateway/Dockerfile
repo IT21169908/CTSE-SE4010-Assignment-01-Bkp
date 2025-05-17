@@ -4,7 +4,7 @@ FROM node:20-alpine
 LABEL authors="hansa"
 
 # Set working directory
-WORKDIR /app/auth
+WORKDIR /app/gateway
 
 # Copy package.json and package-lock.json
 COPY package.json .
@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port
-EXPOSE 8001
+EXPOSE 8000
 
 # Command to run the service
 CMD ["npm", "run", "start:prod"]

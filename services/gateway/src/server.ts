@@ -23,36 +23,35 @@ if (!isProduction) {
     app.use(cors());
 }
 
-app.use("/api/authentication", proxy("http://localhost:8001"));
-app.use("/api/course-management", proxy("http://localhost:8002"));
-app.use("/api/learner", proxy("http://localhost:8003"));
-app.use("/api/notification", proxy("http://localhost:8004")); // products
+app.use("/api/auth", proxy("http://localhost:8001"));
+app.use("/api/course", proxy("http://localhost:8002"));
+app.use("/api/forum", proxy("http://localhost:8003"));
+app.use("/api/notification", proxy("http://localhost:8004"));
 
-app.get('/',
-    (req, res) => {
-        const json = {
-            "name": "Gateway™ API",
-            "services": {
-                "auth": {
-                    "base_url": "http://localhost:8001",
-                    "proxy_url": "http://localhost:8000/api/authentication",
-                },
-                "courses": {
-                    "base_url": "http://localhost:8002",
-                    "proxy_url": "http://localhost:8000/api/course-management",
-                },
-                "lms": {
-                    "base_url": "http://localhost:8003",
-                    "proxy_url": "http://localhost:8000/api/learner",
-                },
-                "notifications": {
-                    "base_url": "http://localhost:8004",
-                    "proxy_url": "http://localhost:8000/api/notification",
-                },
-            }
+app.get('/', (req, res) => {
+    const json = {
+        name: "Gateway™ API",
+        services: {
+            auth: {
+                base_url: process.env.AUTH_BASE_URL || "http://localhost:8001",
+                proxy_url: process.env.GATEWAY_URL + "/api/auth" || "http://localhost:8000/api/auth",
+            },
+            courses: {
+                base_url: process.env.COURSE_BASE_URL || "http://localhost:8002",
+                proxy_url: process.env.GATEWAY_URL + "/api/course" || "http://localhost:8000/api/course",
+            },
+            lms: {
+                base_url: process.env.LMS_BASE_URL || "http://localhost:8003",
+                proxy_url: process.env.GATEWAY_URL + "/api/forum" || "http://localhost:8000/api/forum",
+            },
+            notifications: {
+                base_url: process.env.NOTIF_BASE_URL || "http://localhost:8004",
+                proxy_url: process.env.GATEWAY_URL + "/api/notification" || "http://localhost:8000/api/notification",
+            },
         }
-        res.json(json).status(200);
-    });
+    };
+    res.status(200).json(json);
+});
 
 app.listen(8000, () => {
     console.log("Gateway is Listening to Port 8000");

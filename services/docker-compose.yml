@@ -42,7 +42,7 @@ services:
     environment:
       NODE_ENV: development
     env_file:
-      - ./course-management/.env.docker
+      - ./course-management/.env.example.docker
     # Add other configuration like volumes, networks, etc.
 
   forum-service:
@@ -61,4 +61,4 @@ services:
     environment:
       NODE_ENV: development
     env_file:
-      - ./forum-service/.env.docker
+      - ./forum-service/.env.example.docker
