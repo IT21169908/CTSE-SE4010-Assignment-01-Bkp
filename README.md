@@ -10,7 +10,7 @@ deployed to **AWS EKS** with CI/CD via **GitHub Actions**.
 ### 🔐 Create Docker Hub Access Keys
   - Sign in to Docker Hub
   - Go to Account Settings → Personal Access Token
-  - Generate new token
+  - Generate new token (With Read & Write Access)
   - Add to GitHub Secrets (Settings > Secrets and variables > Actions)
     - DOCKER_USERNAME 
     - DOCKER_PASSWORD
@@ -60,7 +60,7 @@ choco install eksctl
 ### ✅ 4. Create EKS Cluster (simplified example using eksctl)
 
 ```bash
-eksctl create cluster  --name microservice-cluster  --region ap-south-1  --nodegroup-name standard-workers  --node-type t3.medium  --nodes 2
+eksctl create cluster  --name microservice-cluster-t3-medium --region ap-south-1  --nodegroup-name standard-workers  --node-type t3.medium  --nodes 2
 ```
 
 ### ✅ 5. Configure kubectl for EKS
