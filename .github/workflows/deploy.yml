@@ -46,6 +46,8 @@ jobs:
 
       - name: Update K8s manifests and apply
         run: |
+          # Replace Docker username in Kubernetes YAML files
+          find k8s -name "*.yaml" -type f -exec sed -i "s|hansajith18/|${{ secrets.DOCKER_USERNAME }}/|g" {} \;
           aws eks update-kubeconfig --region ap-south-1 --name microservice-cluster-t3-medium
           kubectl apply -f k8s/
 

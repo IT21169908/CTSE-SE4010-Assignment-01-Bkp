@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: forum
-          image: prashanthsl98/forum-service:latest
+          image: hansajith18/forum-service:latest
           ports:
             - containerPort: 8003
           envFrom:

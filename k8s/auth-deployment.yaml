@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: prashanthsl98/auth-service:latest
+          image: hansajith18/auth-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8001

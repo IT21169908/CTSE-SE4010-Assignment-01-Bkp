@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: course
-          image: prashanthsl98/course-service:latest
+          image: hansajith18/course-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8002
