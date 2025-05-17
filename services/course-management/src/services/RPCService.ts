@@ -9,21 +9,16 @@ const {
 
 let amqplibConnection: Connection | null = null;
 
-export const getChannel = async (): Promise<Channel|null> => {
-    console.log(`\nMSG_QUEUE_URL      => ${MSG_QUEUE_URL}\n`)
+export const getChannel = async (): Promise<Channel> => {
+    console.log(`MSG_QUEUE_URL      => ${MSG_QUEUE_URL}`)
     if (!amqplibConnection) {
-        if (MSG_QUEUE_URL != "") {
-            amqplibConnection = await connect(MSG_QUEUE_URL);
-        } else {
-            return null;
-        }
+        amqplibConnection = await connect("amqps://pdkbtoxw:8oTq3vpDscx7JIpztDjfEu08PxTbYbtU@seal.lmq.cloudamqp.com/pdkbtoxw");
     }
     return await amqplibConnection.createChannel();
 };
 
 export const RPCObserver = async (RPC_QUEUE_NAME: string, service: CourseService) => {
     const channel = await getChannel();
-    if (channel == null) return;
     await channel.assertQueue(RPC_QUEUE_NAME, {
         durable: false,
     });
@@ -57,7 +52,6 @@ export const requestData = async (
 ): Promise<any> => {
     try {
         const channel = await getChannel();
-        if (channel == null) return;
         const q = await channel.assertQueue("", {exclusive: true});
 
         channel.sendToQueue(
