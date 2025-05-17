@@ -5,8 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**/*.md'
-      - '**/*.MD'
+      - 'README.md'
       - '.gitignore'
       - 'LICENSE'
 
