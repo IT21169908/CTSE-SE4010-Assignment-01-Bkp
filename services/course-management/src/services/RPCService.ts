@@ -1,20 +1,21 @@
-import {connect, Connection, Channel, ConsumeMessage} from 'amqplib';
+import * as amqplib from 'amqplib';
 import env from "../config";
 import CourseService from "./CourseService";
 import {v4 as uuid4} from "uuid";
+
 
 const {
     MSG_QUEUE_URL,
 } = env
 
-let amqplibConnection: Connection | null = null;
+let amqplibConnection: amqplib.Connection | null = null;
 
-export const getChannel = async (): Promise<Channel> => {
-    console.log(`MSG_QUEUE_URL      => ${MSG_QUEUE_URL}`)
-    if (!amqplibConnection) {
-        amqplibConnection = await connect("amqps://pdkbtoxw:8oTq3vpDscx7JIpztDjfEu08PxTbYbtU@seal.lmq.cloudamqp.com/pdkbtoxw");
+export const getChannel = async () => {
+    if (amqplibConnection === null) {
+        amqplibConnection = await amqplib.connect(MSG_QUEUE_URL);
     }
-    return await amqplibConnection.createChannel();
+    const channel = await amqplibConnection?.createChannel();
+    return channel;
 };
 
 export const RPCObserver = async (RPC_QUEUE_NAME: string, service: CourseService) => {
@@ -25,9 +26,12 @@ export const RPCObserver = async (RPC_QUEUE_NAME: string, service: CourseService
     await channel.prefetch(1);
     await channel.consume(
         RPC_QUEUE_NAME,
-        async (msg: ConsumeMessage | null) => {
-            if (msg && msg.content) {
-                const response = await service.SubscribeRPCObserver(msg.content.toString());// call DB operation
+        async (msg: amqplib.ConsumeMessage | null) => {
+            if (msg !== null && msg.content) {
+                let response = {};
+                // DB Operation
+
+                response = await service.SubscribeRPCObserver(msg.content.toString()); // call DB operation
 
                 channel.sendToQueue(
                     msg.properties.replyTo,
@@ -45,13 +49,13 @@ export const RPCObserver = async (RPC_QUEUE_NAME: string, service: CourseService
     );
 };
 
-export const requestData = async (
-    RPC_QUEUE_NAME: string,
-    requestPayload: { event: string; data: {} },
-    uuid: string
-): Promise<any> => {
+export const requestData = async (RPC_QUEUE_NAME: string, requestPayload: {
+    event: string,
+    data: {}
+}, uuid: string) => {
     try {
         const channel = await getChannel();
+
         const q = await channel.assertQueue("", {exclusive: true});
 
         channel.sendToQueue(
@@ -64,32 +68,36 @@ export const requestData = async (
         );
 
         return new Promise((resolve, reject) => {
+            // timeout n
             const timeout = setTimeout(() => {
                 channel.close();
                 resolve("API could not fulfill the request!");
             }, 8000);
-
             channel.consume(
                 q.queue,
-                (msg: ConsumeMessage | null) => {
-                    if (msg && msg.properties.correlationId === uuid) {
-                        clearTimeout(timeout);
+                (msg) => {
+                    if (msg !== null && msg.properties.correlationId == uuid) {
                         resolve(JSON.parse(msg.content.toString()));
+                        clearTimeout(timeout);
+                    } else {
+                        reject("data Not found!");
                     }
                 },
-                {noAck: true}
+                {
+                    noAck: true,
+                }
             );
         });
     } catch (error) {
-        console.error("RPC Request Error:", error);
+        console.log(error);
         return "error";
     }
 };
 
-export const RPCRequest = async (
-    RPC_QUEUE_NAME: string,
-    requestPayload: { event: string; data: {} }
-) => {
-    const uuid = uuid4();
+export const RPCRequest = async (RPC_QUEUE_NAME: string, requestPayload: {
+    event: string,
+    data: {}
+}) => {
+    const uuid = uuid4(); // correlationId
     return await requestData(RPC_QUEUE_NAME, requestPayload, uuid);
 };
