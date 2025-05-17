@@ -122,7 +122,7 @@ app.get("/", (req, res) => {
                     ${Object.entries(services).map(([name, info]) => `
                             <tr>
                                 <td>
-                                    <a href="${info.proxy_url}/api-docs" target="_blank">
+                                    <a href="${info.base_url}/api-docs" target="_blank">
                                         <button>${name.toUpperCase()}</button>
                                     </a>
                                 </td>
