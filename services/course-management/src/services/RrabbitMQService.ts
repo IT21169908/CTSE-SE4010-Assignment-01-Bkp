@@ -1,5 +1,4 @@
 import * as amqplib from 'amqplib';
-
 import env from "../config";
 import CourseService from "./CourseService";
 

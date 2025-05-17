@@ -1,4 +1,5 @@
-import * as amqplib from 'amqplib';
+// import * as amqplib from 'amqplib';
+import { Connection, Channel, ConsumeMessage } from 'amqplib';
 import env from "../config";
 import CourseService from "./CourseService";
 import {v4 as uuid4} from "uuid";
@@ -8,9 +9,11 @@ const {
     MSG_QUEUE_URL,
 } = env
 
-let amqplibConnection: amqplib.Connection | null = null;
+let amqplibConnection: Connection | null = null;
 
-export const getChannel = async () => {
+// let amqplibConnection: amqplib.Connection | null = null;
+
+export const getChannel = async (): Promise<Channel> => {
     if (amqplibConnection === null) {
         amqplibConnection = await amqplib.connect(MSG_QUEUE_URL);
     }
@@ -25,7 +28,7 @@ export const RPCObserver = async (RPC_QUEUE_NAME: string, service: CourseService
     await channel.prefetch(1);
     await channel.consume(
         RPC_QUEUE_NAME,
-        async (msg) => {
+        async (msg: ConsumeMessage | null) => {
             if (msg !== null && msg.content) {
                 let response = {};
                 // DB Operation
