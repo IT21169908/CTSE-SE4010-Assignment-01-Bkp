@@ -5,6 +5,9 @@ import proxy from "express-http-proxy";
 import morgan from "morgan";
 
 const isProduction = process.env.NODE_ENV === "production";
+const port = parseInt(process.env.PORT || '80', 10);
+console.log(".env port fetched as: " + port);
+    
 const app = express();
 
 
@@ -53,6 +56,6 @@ app.get('/', (req, res) => {
     res.status(200).json(json);
 });
 
-app.listen(80, () => {
+app.listen(port, () => {
     console.log("Gateway is Listening to Port 80");
 });
