@@ -14,7 +14,8 @@ export const getChannel = async () => {
     if (amqplibConnection === null) {
         amqplibConnection = await amqplib.connect(MSG_QUEUE_URL);
     }
-    return await amqplibConnection.createChannel();
+    const channel = await amqplibConnection?.createChannel();
+    return channel;
 };
 
 export const RPCObserver = async (RPC_QUEUE_NAME: string, service: CourseService) => {
@@ -25,7 +26,7 @@ export const RPCObserver = async (RPC_QUEUE_NAME: string, service: CourseService
     await channel.prefetch(1);
     await channel.consume(
         RPC_QUEUE_NAME,
-        async (msg) => {
+        async (msg: amqplib.ConsumeMessage | null) => {
             if (msg !== null && msg.content) {
                 let response = {};
                 // DB Operation
@@ -70,11 +71,11 @@ export const requestData = async (RPC_QUEUE_NAME: string, requestPayload: {
             // timeout n
             const timeout = setTimeout(() => {
                 channel.close();
-                resolve("API could not fullfil the request!");
+                resolve("API could not fulfill the request!");
             }, 8000);
             channel.consume(
                 q.queue,
-                (msg) => {
+                (msg: amqplib.ConsumeMessage | null) => {
                     if (msg !== null && msg.properties.correlationId == uuid) {
                         resolve(JSON.parse(msg.content.toString()));
                         clearTimeout(timeout);
