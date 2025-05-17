@@ -35,7 +35,7 @@ const startServer = async () => {
         console.log('--> Mongoose connected!');
         startupPassport(app).then(() => {
             AppLogger.info('--> Passport started!');
-            server.listen(listenOptions, () => {
+            server.listen(port, () => {
                 AppLogger.info('--> HTTPS Server successfully started at port: ' + port);
                 console.log('--> HTTPS Server successfully started at port: ' + port);
             });
