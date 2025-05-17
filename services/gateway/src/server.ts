@@ -23,10 +23,10 @@ if (!isProduction) {
     app.use(cors());
 }
 
-app.use("/api/auth", proxy("http://localhost:8001"));
-app.use("/api/course", proxy("http://localhost:8002"));
-app.use("/api/forum", proxy("http://localhost:8003"));
-app.use("/api/notification", proxy("http://localhost:8004"));
+app.use("/api/auth", proxy(process.env.AUTH_BASE_URL || "http://localhost:8001"));
+app.use("/api/course", proxy(process.env.COURSE_BASE_URL || "http://localhost:8002"));
+app.use("/api/forum", proxy(process.env.LMS_BASE_URL || "http://localhost:8003"));
+app.use("/api/notification", proxy(process.env.NOTIF_BASE_URL || "http://localhost:8004"));
 
 app.get('/', (req, res) => {
     const json = {
