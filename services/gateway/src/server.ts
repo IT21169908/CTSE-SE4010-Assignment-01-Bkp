@@ -28,7 +28,15 @@ if (!isProduction) {
 }
 
 // Setup Swagger UI at /docs before API routes
-setupSwagger(app);
+// Since setupSwagger is async, we need to handle it properly
+(async () => {
+    try {
+        await setupSwagger(app);
+        console.log("Swagger documentation setup complete");
+    } catch (error) {
+        console.error("Error setting up Swagger documentation:", error);
+    }
+})();
 
 // API proxy routes
 app.use("/api/auth", proxy(process.env.AUTH_BASE_URL || "http://localhost:8001"));
