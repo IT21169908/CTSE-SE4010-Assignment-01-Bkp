@@ -118,6 +118,11 @@ app.get("/", (req, res) => {
             <h1>Gateway™ API</h1>
             <h2>🚀 Cloud Microservice Deployment on AWS EKS</h2>
             <p>This project includes a containerized Node.js + TypeScript-based Microservice, deployed to AWS EKS with CI/CD via GitHub Actions.</p>
+            <p>
+            <a href="${gatewayUrl}/docs" target="_blank">
+                <button>API COLLECTION</button>
+            </a>
+            </p>
             <table>
                 <thead>
                     <tr>

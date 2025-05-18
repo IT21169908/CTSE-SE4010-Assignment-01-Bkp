@@ -652,7 +652,7 @@ export const setupSwagger = (app: Express) => {
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
     // Endpoint to get the Swagger JSON
-    app.get('/api-docs/swagger.json', (req, res) => {
+    app.get('/swagger.json', (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         res.send(swaggerSpec);
     });
